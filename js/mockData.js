@@ -16,7 +16,7 @@ const KNOWN_URLS = {
     countryCode: "US",
     confidence: "99.8%",
     category: "Search Engine",
-    flags: []
+    flags: ["No standard threat signals triggered during parsing."]
   },
   "github.com": {
     score: 12,
@@ -29,7 +29,7 @@ const KNOWN_URLS = {
     countryCode: "US",
     confidence: "99.2%",
     category: "Software & Technology",
-    flags: []
+    flags: ["No standard threat signals triggered during parsing."]
   },
   "wikipedia.org": {
     score: 5,
@@ -42,7 +42,7 @@ const KNOWN_URLS = {
     countryCode: "US",
     confidence: "99.9%",
     category: "Education & Reference",
-    flags: []
+    flags: ["No standard threat signals triggered during parsing."]
   },
   "microsoft.com": {
     score: 7,
@@ -55,7 +55,100 @@ const KNOWN_URLS = {
     countryCode: "US",
     confidence: "99.6%",
     category: "Software & Technology",
-    flags: []
+    flags: ["No standard threat signals triggered during parsing."]
+  },
+
+  // Indian Commerce & Education Safe Sites
+  "pepperfry.com": {
+    score: 10,
+    status: "Safe",
+    ssl: "Valid (Amazon RSA)",
+    age: "14 years",
+    registrar: "GoDaddy.com, LLC",
+    ip: "13.227.188.43",
+    country: "India",
+    countryCode: "IN",
+    confidence: "97.5%",
+    category: "E-Commerce & Furniture",
+    flags: ["No standard threat signals triggered during parsing."]
+  },
+  "whatsapp.com": {
+    score: 8,
+    status: "Safe",
+    ssl: "Valid (DigiCert SHA-256)",
+    age: "17 years",
+    registrar: "MarkMonitor, Inc.",
+    ip: "157.240.22.60",
+    country: "United States",
+    countryCode: "US",
+    confidence: "99.7%",
+    category: "Social Networking & Communication",
+    flags: ["No standard threat signals triggered during parsing."]
+  },
+  "amazon.in": {
+    score: 10,
+    status: "Safe",
+    ssl: "Valid (DigiCert)",
+    age: "13 years",
+    registrar: "MarkMonitor, Inc.",
+    ip: "52.95.120.21",
+    country: "India",
+    countryCode: "IN",
+    confidence: "99.1%",
+    category: "E-Commerce & Retail",
+    flags: ["No standard threat signals triggered during parsing."]
+  },
+  "flipkart.com": {
+    score: 6,
+    status: "Safe",
+    ssl: "Valid (DigiCert SHA-256)",
+    age: "18 years",
+    registrar: "GoDaddy.com, LLC",
+    ip: "163.53.78.128",
+    country: "India",
+    countryCode: "IN",
+    confidence: "99.4%",
+    category: "E-Commerce & Retail",
+    flags: ["No standard threat signals triggered during parsing."]
+  },
+  "shopsy.in": {
+    score: 12,
+    status: "Safe",
+    ssl: "Valid (DigiCert)",
+    age: "5 years",
+    registrar: "GoDaddy.com, LLC",
+    ip: "163.53.78.130",
+    country: "India",
+    countryCode: "IN",
+    confidence: "96.8%",
+    category: "E-Commerce (Flipkart Group)",
+    flags: ["No standard threat signals triggered during parsing."]
+  },
+  "avniet.ac.in": {
+    score: 14,
+    status: "Safe",
+    ssl: "Valid (Let's Encrypt)",
+    age: "8 years",
+    registrar: "NIXI (.in Registry)",
+    ip: "103.146.22.56",
+    country: "India",
+    countryCode: "IN",
+    confidence: "95.2%",
+    category: "Education & Academic Institution",
+    flags: ["No standard threat signals triggered during parsing."]
+  },
+  "tkrcet.in": {
+    score: 15,
+    status: "Safe",
+    ssl: "Valid (Let's Encrypt)",
+    age: "10 years",
+    registrar: "NIXI (.in Registry)",
+    ip: "103.21.58.192",
+    country: "India",
+    countryCode: "IN",
+    confidence: "94.8%",
+    category: "Education & Engineering College",
+    flags: ["No standard threat signals triggered during parsing."]
   },
 
   // Suspicious Sites (Score 31 - 59)
@@ -218,7 +311,11 @@ const INITIAL_WHITELIST = [
   "microsoft.com",
   "youtube.com",
   "amazon.com",
-  "facebook.com"
+  "facebook.com",
+  "whatsapp.com",
+  "amazon.in",
+  "flipkart.com",
+  "pepperfry.com"
 ];
 
 const INITIAL_BLACKLIST = [

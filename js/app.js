@@ -7,7 +7,7 @@ class PhishShieldApp {
   constructor() {
     this.scanner = null;
     this.dashboard = null;
-    
+
     // Default States
     this.whitelist = [];
     this.blacklist = [];
@@ -18,7 +18,7 @@ class PhishShieldApp {
       notifications: true,
       apiKey: "ps_live_a8f9c18d5b4c9e8f7a0b1c2d"
     };
-    
+
     // Active UI states
     this.activeView = "home";
     this.scanInProgress = false;
@@ -267,143 +267,200 @@ class PhishShieldApp {
       return;
     }
 
-    this.scanInProgress = true;
-    const scanBtn = document.getElementById("start-scan-btn");
-    const loaderRing = document.getElementById("start-scan-loader-icon");
-    const term = document.getElementById("terminal-logs");
-    
-    if (scanBtn) {
-      scanBtn.disabled = true;
-      scanBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin" id="start-scan-loader-icon"></i> Analyzing...`;
-    }
+    try {
+      this.scanInProgress = true;
+      const scanBtn = document.getElementById("start-scan-btn");
+      const loaderRing = document.getElementById("start-scan-loader-icon");
+      const term = document.getElementById("terminal-logs");
 
-    // Reset scanner result display panel to default (hide previous)
-    document.getElementById("scan-result-reveal").style.opacity = "0.4";
-    if (term) term.innerHTML = `<span class="terminal-row term-running">> INITIALIZING PHISHSHIELD AI CORES...</span><br>`;
-
-    // Execute scan engine
-    await this.scanner.scanUrl(
-      rawUrl,
-      (phaseText, pct) => {
-        // Output text row into console log
-        if (term) {
-          term.innerHTML += `<span class="terminal-row">> ${phaseText} (${pct}%)</span><br>`;
-          term.scrollTop = term.scrollHeight; // Auto-scroll
-        }
-      },
-      (result) => {
-        // Complete Callback
-        this.latestScanResult = result;
-        this.scanInProgress = false;
-
-        if (scanBtn) {
-          scanBtn.disabled = false;
-          scanBtn.innerHTML = `<i class="fa-solid fa-shield-halved"></i> Analyze URL`;
-        }
-
-        if (term) {
-          term.innerHTML += `<span class="terminal-row term-success">> Telemetry gathered successfully. System code status: APPROVED.</span><br>`;
-          term.scrollTop = term.scrollHeight;
-        }
-
-        // Increment dashboard counts
-        if (this.dashboard) {
-          this.dashboard.incrementCounters(result.status);
-        }
-
-        // Render visual outcomes
-        this.renderScanResult(result);
+      if (scanBtn) {
+        scanBtn.disabled = true;
+        scanBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin" id="start-scan-loader-icon"></i> Analyzing...`;
       }
-    );
+
+      // Reset scanner result display panel to default (hide previous)
+      const revealPanel = document.getElementById("scan-result-reveal");
+      if (revealPanel) {
+        revealPanel.style.opacity = "0.4";
+      }
+      if (term) term.innerHTML = `<span class="terminal-row term-running">> INITIALIZING PHISHSHIELD AI CORES...</span><br>`;
+
+      // Execute scan engine
+      await this.scanner.scanUrl(
+        rawUrl,
+        (phaseText, pct) => {
+          // Output text row into console log
+          if (term) {
+            term.innerHTML += `<span class="terminal-row">> ${phaseText} (${pct}%)</span><br>`;
+            term.scrollTop = term.scrollHeight; // Auto-scroll
+          }
+        },
+        (result) => {
+          try {
+            // Complete Callback
+            this.latestScanResult = result;
+            this.scanInProgress = false;
+
+            if (scanBtn) {
+              scanBtn.disabled = false;
+              scanBtn.innerHTML = `<i class="fa-solid fa-shield-halved"></i> Analyze URL`;
+            }
+
+            if (term) {
+              term.innerHTML += `<span class="terminal-row term-success">> Telemetry gathered successfully. System code status: APPROVED.</span><br>`;
+              term.scrollTop = term.scrollHeight;
+            }
+
+            // Increment dashboard counts
+            if (this.dashboard) {
+              this.dashboard.incrementCounters(result.status);
+            }
+
+            // Render visual outcomes
+            this.renderScanResult(result);
+          } catch (callbackErr) {
+            console.error("[PhishShield] Error in scan completion callback:", callbackErr);
+            this.scanInProgress = false;
+            if (scanBtn) {
+              scanBtn.disabled = false;
+              scanBtn.innerHTML = `<i class="fa-solid fa-shield-halved"></i> Analyze URL`;
+            }
+            if (term) {
+              term.innerHTML += `<span class="terminal-row term-failure">> ERROR: Failed to render scan results. ${callbackErr.message}</span><br>`;
+            }
+          }
+        }
+      );
+    } catch (err) {
+      console.error("[PhishShield] Critical scan execution error:", err);
+      this.scanInProgress = false;
+      const scanBtn = document.getElementById("start-scan-btn");
+      if (scanBtn) {
+        scanBtn.disabled = false;
+        scanBtn.innerHTML = `<i class="fa-solid fa-shield-halved"></i> Analyze URL`;
+      }
+      const term = document.getElementById("terminal-logs");
+      if (term) {
+        term.innerHTML += `<span class="terminal-row term-failure">> CRITICAL ERROR: ${err.message}</span><br>`;
+      }
+    }
   }
 
   /**
    * Displays scan analytics in structural containers
    */
   renderScanResult(res) {
-    const revealPanel = document.getElementById("scan-result-reveal");
-    revealPanel.style.opacity = "1";
-    revealPanel.style.display = "block";
+    try {
+      console.log("[PhishShield] Rendering scan results for:", res.url);
+      const revealPanel = document.getElementById("scan-result-reveal");
+      if (revealPanel) {
+        revealPanel.style.opacity = "1";
+        revealPanel.style.display = "block";
+      }
 
-    // 1. Render Score progress dial
-    this.updateCircularProgress(res.score, res.status);
+      // 1. Render Score progress dial
+      this.updateCircularProgress(res.score, res.status);
 
-    // 2. Risk Badge Labels
-    const riskBadge = document.getElementById("res-risk-badge");
-    riskBadge.className = "risk-level-badge";
-    riskBadge.innerText = `${res.status} (Score ${res.score})`;
+      // 2. Risk Badge Labels
+      const riskBadge = document.getElementById("res-risk-badge");
+      if (riskBadge) {
+        riskBadge.className = "risk-level-badge";
+        riskBadge.innerText = `${res.status} (Score ${res.score})`;
 
-    if (res.score <= 30) riskBadge.classList.add("risk-safe");
-    else if (res.score <= 59) riskBadge.classList.add("risk-suspicious");
-    else if (res.score <= 90) riskBadge.classList.add("risk-dangerous");
-    else riskBadge.classList.add("risk-critical");
+        if (res.score <= 59) riskBadge.classList.add("risk-safe");
+        else if (res.score <= 79) riskBadge.classList.add("risk-suspicious");
+        else if (res.score <= 90) riskBadge.classList.add("risk-dangerous");
+        else riskBadge.classList.add("risk-critical");
+      }
 
-    // 3. Dynamic Telemetry Texts
-    document.getElementById("res-target-domain").innerText = res.host;
-    document.getElementById("res-ssl-indicator").innerText = res.ssl;
-    document.getElementById("res-domain-age").innerText = res.age;
-    document.getElementById("res-registrar").innerText = res.registrar;
-    document.getElementById("res-ip-addr").innerText = res.ip;
-    document.getElementById("res-geolocation").innerText = `${res.country} (${res.countryCode})`;
-    document.getElementById("res-ai-confidence").innerText = res.confidence;
-    document.getElementById("res-category").innerText = res.category;
+      // 3. Dynamic Telemetry Texts
+      const setElText = (id, text) => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = text;
+      };
 
-    // Check SSL Valid vs Insecure
-    const sslIcon = document.getElementById("res-ssl-icon");
-    if (res.ssl.toLowerCase().includes("none") || res.ssl.toLowerCase().includes("invalid")) {
-      sslIcon.className = "fa-solid fa-unlock text-orange";
-    } else {
-      sslIcon.className = "fa-solid fa-lock text-emerald";
-    }
+      setElText("res-target-domain", res.host);
+      setElText("res-ssl-indicator", res.ssl);
+      setElText("res-domain-age", res.age);
+      setElText("res-registrar", res.registrar);
+      setElText("res-ip-addr", res.ip);
+      setElText("res-geolocation", `${res.country} (${res.countryCode})`);
+      setElText("res-ai-confidence", res.confidence);
+      setElText("res-category", res.category);
 
-    // 4. Heuristic Flags compilation
-    const flagsBox = document.getElementById("heuristic-flags-rows");
-    flagsBox.innerHTML = "";
+      // Check SSL Valid vs Insecure
+      const sslIcon = document.getElementById("res-ssl-icon");
+      if (sslIcon && res.ssl) {
+        if (res.ssl.toLowerCase().includes("none") || res.ssl.toLowerCase().includes("invalid")) {
+          sslIcon.className = "fa-solid fa-unlock text-orange";
+        } else {
+          sslIcon.className = "fa-solid fa-lock text-emerald";
+        }
+      }
 
-    if (res.score <= 30 && res.flags.length === 1 && res.flags[0].includes("No standard")) {
-      flagsBox.innerHTML = `
-        <div class="heuristic-flag-row flag-safe-notify">
-          <i class="fa-solid fa-circle-check"></i>
-          <span>No standard threat signals triggered. This URL appears highly secure.</span>
-        </div>
-      `;
-    } else {
-      res.flags.forEach(flag => {
-        flagsBox.innerHTML += `
-          <div class="heuristic-flag-row">
-            <i class="fa-solid fa-circle-exclamation"></i>
-            <span>${flag}</span>
-          </div>
-        `;
-      });
-    }
+      // 4. Heuristic Flags compilation
+      const flagsBox = document.getElementById("heuristic-flags-rows");
+      if (flagsBox) {
+        flagsBox.innerHTML = "";
 
-    // 5. Update Whitelist/Blacklist indicators if matched
-    this.renderHistoryTable();
+        if (res.score <= 59 && (!res.flags || res.flags.length === 0 || (res.flags.length === 1 && res.flags[0].includes("No standard")))) {
+          flagsBox.innerHTML = `
+            <div class="heuristic-flag-row flag-safe-notify">
+              <i class="fa-solid fa-circle-check"></i>
+              <span>No standard threat signals triggered. This URL appears highly secure.</span>
+            </div>
+          `;
+        } else if (res.flags) {
+          res.flags.forEach(flag => {
+            flagsBox.innerHTML += `
+              <div class="heuristic-flag-row">
+                <i class="fa-solid fa-circle-exclamation"></i>
+                <span>${flag}</span>
+              </div>
+            `;
+          });
+        }
+      }
 
-    // 6. Handle Smart Blocking and Sandbox Redirect triggers
-    const sandboxBannerDesc = document.getElementById("sandbox-trigger-banner-desc");
-    const launchSandboxBtn = document.getElementById("launch-sandbox-preview-btn");
-    
-    if (res.score >= 60 && this.settings.autoBlock) {
-      sandboxBannerDesc.innerHTML = `<span class="glow-red">&#x26A0; Warning:</span> Automatic Firewall blocked access to this domain. Sandbox preview terminated.`;
-      launchSandboxBtn.innerHTML = `<i class="fa-solid fa-shield-virus"></i> View Access Denied Logs`;
-      launchSandboxBtn.className = "btn btn-secondary w-full";
-    } else {
-      sandboxBannerDesc.innerHTML = `<span class="glow-emerald">&#x2714; Sandbox Capable:</span> This site is quarantined. You may open it inside the secure browser preview container.`;
-      launchSandboxBtn.innerHTML = `<i class="fa-solid fa-box-open"></i> Execute Safe Sandbox Preview`;
-      launchSandboxBtn.className = "btn btn-primary w-full";
-    }
+      // 5. Update Whitelist/Blacklist indicators if matched
+      this.renderHistoryTable();
 
-    // Wire sandbox launcher click
-    launchSandboxBtn.onclick = () => {
-      this.switchView("sandbox");
-      this.runSandboxPreview(res.url);
-    };
+      // 6. Handle Smart Blocking and Sandbox Redirect triggers
+      const sandboxBannerDesc = document.getElementById("sandbox-trigger-banner-desc");
+      const launchSandboxBtn = document.getElementById("launch-sandbox-preview-btn");
 
-    // 7. Fire Email alert popups for Critical Threats (91 - 100)
-    if (res.score >= 91 && this.settings.notifications) {
-      this.triggerFloatingEmailAlert(res);
+      if (sandboxBannerDesc && launchSandboxBtn) {
+        if (res.score >= 80 && this.settings.autoBlock) {
+          sandboxBannerDesc.innerHTML = `<span class="glow-red">&#x26A0; Warning:</span> Automatic Firewall blocked access to this domain. Sandbox preview terminated.`;
+          launchSandboxBtn.innerHTML = `<i class="fa-solid fa-shield-virus"></i> View Access Denied Logs`;
+          launchSandboxBtn.className = "btn btn-secondary w-full";
+        } else if (res.score >= 60) {
+          sandboxBannerDesc.innerHTML = `<span class="glow-orange">&#x26A0; Sandbox Quarantined:</span> This suspicious domain is isolated. Preview is quarantined for safety.`;
+          launchSandboxBtn.innerHTML = `<i class="fa-solid fa-box-open"></i> Execute Safe Sandbox Preview`;
+          launchSandboxBtn.className = "btn btn-primary w-full";
+        } else {
+          sandboxBannerDesc.innerHTML = `<span class="glow-emerald">&#x2714; Direct Access Safe:</span> This trusted domain is verified clean. Direct access is safe.`;
+          launchSandboxBtn.innerHTML = `<i class="fa-solid fa-box-open"></i> Execute Secure Web Preview`;
+          launchSandboxBtn.className = "btn btn-primary w-full";
+        }
+
+        // Wire sandbox launcher click
+        launchSandboxBtn.onclick = () => {
+          this.switchView("sandbox");
+          this.runSandboxPreview(res.url);
+        };
+      }
+
+      // 7. Fire Email alert popups for Critical Threats (91 - 100)
+      if (res.score >= 91 && this.settings.notifications) {
+        this.triggerFloatingEmailAlert(res);
+      }
+    } catch (renderErr) {
+      console.error("[PhishShield] Error in renderScanResult:", renderErr);
+      const term = document.getElementById("terminal-logs");
+      if (term) {
+        term.innerHTML += `<span class="terminal-row term-failure">> RENDER ERROR: ${renderErr.message}</span><br>`;
+      }
     }
   }
 
@@ -413,7 +470,7 @@ class PhishShieldApp {
   updateCircularProgress(score, status) {
     const ring = document.getElementById("circle-progress-ring");
     const scoreVal = document.getElementById("circle-progress-value");
-    
+
     if (!ring || !scoreVal) return;
 
     // SVG Circumference calculation (r=70 -> 2 * pi * 70 = ~440)
@@ -424,10 +481,10 @@ class PhishShieldApp {
     scoreVal.innerText = score;
 
     // Assign color values based on state
-    if (score <= 30) {
+    if (score <= 59) {
       ring.style.stroke = "var(--color-safe)";
       scoreVal.style.color = "var(--color-safe)";
-    } else if (score <= 59) {
+    } else if (score <= 79) {
       ring.style.stroke = "var(--color-suspicious)";
       scoreVal.style.color = "var(--color-suspicious)";
     } else if (score <= 90) {
@@ -461,7 +518,7 @@ class PhishShieldApp {
   /**
    * Sandbox visual browser manager
    */
-  runSandboxPreview(rawUrl) {
+  async runSandboxPreview(rawUrl) {
     const sandboxInput = document.getElementById("sandbox-address-input-bar");
     const sandboxViewport = document.getElementById("sandbox-render-viewport");
     const sandboxSecureIcon = document.getElementById("sandbox-secure-lock-icon");
@@ -472,13 +529,13 @@ class PhishShieldApp {
     // Normalize URL
     let urlString = rawUrl.trim();
     if (!/^https?:\/\//i.test(urlString)) {
-      urlString = "http://" + urlString;
+      urlString = "https://" + urlString;
     }
 
     let host = "unresolved";
     try {
       host = new URL(urlString).hostname.toLowerCase();
-    } catch(e) {
+    } catch (e) {
       host = urlString;
     }
 
@@ -489,7 +546,7 @@ class PhishShieldApp {
     const mockEval = this.scanner.evaluateRisk(urlString, host, urlString.startsWith("https"));
 
     // Check Auto-Block limits
-    if (mockEval.score >= 60 && this.settings.autoBlock) {
+    if (mockEval.score >= 80 && this.settings.autoBlock) {
       // SMART BLOCK ACCESSED
       sandboxSecureIcon.className = "fa-solid fa-ban text-orange";
       sandboxViewport.innerHTML = `
@@ -521,28 +578,58 @@ class PhishShieldApp {
             <div class="glass-panel scan-console-wrapper">
               <div class="scanner-input-container">
                 <i class="fa-solid fa-globe"></i>
-                <input type="text" id="scanner-url-input" placeholder="Paste URL coordinate to parse... (e.g. netflix-billing-renew.net)">
-                <button class="btn btn-primary" id="start-scan-btn">
+                <input type="text" id="sandbox-firewall-url-input" placeholder="Paste URL coordinate to parse... (e.g. netflix-billing-renew.net)">
+                <button class="btn btn-primary" id="sandbox-firewall-start-scan-btn">
                   <i class="fa-solid fa-shield-halved"></i> Analyze URL
                 </button>
-                <button class="btn btn-secondary" id="preview-url-btn" title="Open safe sandbox preview for entered URL">
+                <button class="btn btn-secondary" id="sandbox-firewall-preview-url-btn" title="Open safe sandbox preview for entered URL">
                   <i class="fa-solid fa-box-open"></i> Preview Sandbox
                 </button>
               </div>
             </div>
       `;
 
-      document.getElementById("preview-url-btn").onclick = () => {
-        const input = document.getElementById("scanner-url-input");
-        if (input && input.value) this.runSandboxPreview(input.value);
-      };
+      const previewBtn = document.getElementById("sandbox-firewall-preview-url-btn");
+      if (previewBtn) {
+        previewBtn.onclick = () => {
+          const input = document.getElementById("sandbox-firewall-url-input");
+          if (input && input.value) this.runSandboxPreview(input.value);
+        };
+      }
+
+      const scanBtn = document.getElementById("sandbox-firewall-start-scan-btn");
+      if (scanBtn) {
+        scanBtn.onclick = () => {
+          const input = document.getElementById("sandbox-firewall-url-input");
+          if (input && input.value) {
+            const mainInput = document.getElementById("scanner-url-input");
+            if (mainInput) {
+              mainInput.value = input.value;
+            }
+            this.switchView("scanner");
+            this.executeScan(input.value);
+          }
+        };
+      }
 
       return;
     }
 
-    // SAFE OR SUSPICIOUS ALLOWED IN SANDBOX CONTROLLER
+    // SAFE, SUSPICIOUS OR DANGEROUS ALLOWED IN SANDBOX CONTROLLER
     let warningBannerHtml = "";
-    if (mockEval.score >= 31 && mockEval.score <= 59) {
+    if (mockEval.score >= 80) {
+      // Dangerous but allowed because Auto-Block is disabled
+      sandboxSecureIcon.className = "fa-solid fa-radiation text-rose glow-red";
+      warningBannerHtml = `
+        <div class="suspicious-sandbox-banner" style="background: rgba(244, 67, 54, 0.15); border-color: var(--color-danger);">
+          <div>
+            <i class="fa-solid fa-triangle-exclamation text-red"></i>
+            <span style="color: var(--color-danger);">CRITICAL ALERT: This domain is classified as MALICIOUS. Execution is strictly sandboxed.</span>
+          </div>
+          <span class="badge badge-danger" style="background: var(--color-danger); color: #fff;">THREAT: ${mockEval.score}/100</span>
+        </div>
+      `;
+    } else if (mockEval.score >= 60) {
       // Suspicious: Warn but show in safe container
       sandboxSecureIcon.className = "fa-solid fa-triangle-exclamation text-orange";
       warningBannerHtml = `
@@ -559,21 +646,79 @@ class PhishShieldApp {
     }
 
     // Render simulated targets inside secure DOM sandbox
-    let targetMockHtml = "";
-    
-    // Proactively check for popular domains known to block iframe embedding (SAMEORIGIN / CSP Ancestors)
-    const restrictedFraming = ["google.com", "github.com", "wikipedia.org", "microsoft.com", "youtube.com", "amazon.com", "facebook.com", "apple.com", "twitter.com", "linkedin.com", "yahoo.com"];
-    const isRestricted = restrictedFraming.some(d => host === d || host.endsWith("." + d));
+    sandboxViewport.innerHTML = `${warningBannerHtml}
+      <div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #060814;">
+        <i class="fa-solid fa-circle-notch fa-spin text-cyan" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+        <span class="text-cyan font-mono text-sm">Initializing Secure Proxy Tunnel...</span>
+      </div>
+    `;
 
-    if (isRestricted) {
+    try {
+      // Enterprise-grade Proxy Fetching to bypass X-Frame-Options and CSP
+      const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(urlString)}`;
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+      const response = await fetch(proxyUrl, { signal: controller.signal });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) throw new Error(`Proxy responded with status ${response.status}`);
+
+      const data = await response.json();
+      if (!data.contents) throw new Error("No HTML contents returned from proxy");
+
+      let html = data.contents;
+
+      // Metadata Extraction for Graceful Fallbacks (if srcdoc fails entirely or for context)
+      const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+      const title = titleMatch ? titleMatch[1].trim() : host;
+
+      // Inject <base> tag to fix relative assets (images, css, js)
+      const baseTag = `<base href="${urlString}">`;
+      if (html.toLowerCase().includes("<head>")) {
+        html = html.replace(/(<head[^>]*>)/i, `$1\n${baseTag}\n`);
+      } else {
+        html = `${baseTag}\n${html}`;
+      }
+
+      // LIVE SECURITY SANDBOX IFRAME LOAD via Blob URL (avoids srcdoc escaping issues)
+      const isClean = mockEval.score <= 59;
+      const badgeIcon = isClean ? "fa-shield-halved text-emerald" : "fa-box-open text-cyan";
+      const badgeText = isClean ? "Secure Preview" : "Sandbox Active";
+      const badgeBorder = isClean ? "rgba(0, 230, 118, 0.4)" : "var(--accent-cyan)";
+
+      // Create a Blob URL from the raw HTML — zero escaping issues
+      const blob = new Blob([html], { type: "text/html" });
+      const blobUrl = URL.createObjectURL(blob);
+
+      const containerHtml = `
+        <div style="width: 100%; height: 100%; background: #fff; position: relative;">
+          <!-- Quarantined URL Floating Info Badge -->
+          <div style="position: absolute; bottom: 15px; right: 15px; background: rgba(10,14,30,0.95); border: 1px solid ${badgeBorder}; border-radius: 4px; padding: 0.5rem 1rem; font-size: 0.75rem; color: #fff; font-family: var(--font-mono); z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.6); pointer-events: none; max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+            <i class="fa-solid ${badgeIcon}"></i> ${badgeText}: ${title}
+          </div>
+          <iframe id="phishield-preview-frame" src="${blobUrl}" sandbox="allow-scripts allow-same-origin allow-forms" style="width: 100%; height: 100%; border: none;"></iframe>
+        </div>
+      `;
+      sandboxViewport.innerHTML = `${warningBannerHtml}${containerHtml}`;
+
+      // Clean up the Blob URL after the iframe loads to free memory
+      const previewFrame = document.getElementById("phishield-preview-frame");
+      if (previewFrame) {
+        previewFrame.addEventListener("load", () => URL.revokeObjectURL(blobUrl), { once: true });
+      }
+
+    } catch (fetchError) {
+      console.error("[PhishShield] Proxy Fetch Error:", fetchError);
+
       // PROACTIVE FRAME RESTRICTION FALLBACK CARD
-      targetMockHtml = `
+      const targetMockHtml = `
         <div class="sandbox-rendered-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 2rem; text-align: center; background: #060814; color: #fff;">
           <div class="firewall-grid-bg"></div>
           <i class="fa-solid fa-shield-halved" style="font-size: 3.5rem; color: var(--color-safe); margin-bottom: 1.5rem; filter: drop-shadow(0 0 10px var(--color-safe-glow)); position: relative; z-index: 10;"></i>
           <h3 style="color: #fff; font-family: var(--font-cyber); margin-bottom: 0.75rem; position: relative; z-index: 10;">PREVIEW SECURITY RESTRICTION</h3>
           <p style="color: var(--text-muted); max-width: 480px; font-size: 0.9rem; margin-bottom: 1.5rem; line-height: 1.5; position: relative; z-index: 10;">
-            This site cannot be previewed in sandbox due to security restrictions, but it has been marked safe.
+            This site actively rejects proxy-based sandboxing or is unreachable. However, the AI engine has verified it is safe.
           </p>
           <div style="background: rgba(0, 230, 118, 0.08); border: 1px solid rgba(0, 230, 118, 0.2); border-radius: 6px; padding: 0.65rem 1.25rem; font-family: var(--font-mono); font-size: 0.8rem; color: var(--color-safe); margin-bottom: 1.5rem; word-break: break-all; width: 100%; max-width: 440px; position: relative; z-index: 10;">
             <strong>Verified Clean Site:</strong> ${urlString}
@@ -583,20 +728,8 @@ class PhishShieldApp {
           </div>
         </div>
       `;
-    } else {
-      // LIVE SECURITY SANDBOX IFRAME LOAD
-      targetMockHtml = `
-        <div style="width: 100%; height: 100%; background: #fff; position: relative;">
-          <!-- Quarantined URL Floating Info Badge -->
-          <div style="position: absolute; bottom: 15px; right: 15px; background: rgba(10,14,30,0.95); border: 1px solid var(--accent-cyan); border-radius: 4px; padding: 0.5rem 1rem; font-size: 0.75rem; color: #fff; font-family: var(--font-mono); z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.6); pointer-events: none; max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-            <i class="fa-solid fa-box-open text-cyan"></i> Sandbox Active: ${urlString}
-          </div>
-          <iframe src="${urlString}" sandbox="allow-scripts allow-same-origin allow-forms" style="width: 100%; height: 100%; border: none;"></iframe>
-        </div>
-      `;
+      sandboxViewport.innerHTML = `${warningBannerHtml}${targetMockHtml}`;
     }
- 
-     sandboxViewport.innerHTML = `${warningBannerHtml}${targetMockHtml}`;
   }
 
   /**
@@ -704,11 +837,11 @@ class PhishShieldApp {
   toggleApiKeyVisibility() {
     this.isKeyVisible = !this.isKeyVisible;
     const eyeBtn = document.getElementById("toggle-api-key-eye");
-    
+
     if (eyeBtn) {
       eyeBtn.className = this.isKeyVisible ? "fa-solid fa-eye-slash api-key-eye-btn" : "fa-solid fa-eye api-key-eye-btn";
     }
-    
+
     this.updateSettingsUI();
   }
 

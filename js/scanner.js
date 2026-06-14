@@ -15,70 +15,123 @@ class PhishShieldScanner {
    * @param {function} onComplete - Callback when scan is finished: (resultObject)
    */
   async scanUrl(rawUrl, onPhase, onComplete) {
-    // 1. Sanitize & Normalize URL
-    let urlString = rawUrl.trim();
-    let hasProtocolError = false;
+    console.log('[PhishShield] scanUrl() called with:', rawUrl);
 
-    // Detect protocol spelling typos
-    if (/^(htpt|htps|http|https|ttp|tps|tp)\b/i.test(urlString)) {
-      if (!/^(https?:\/\/)/i.test(urlString)) {
-        hasProtocolError = true;
-      }
-    }
-
-    // Standardize URL
-    if (!/^https?:\/\//i.test(urlString)) {
-      if (/^https?\/\//i.test(urlString)) {
-        urlString = urlString.replace(/^https?\/\//i, "https://");
-      } else if (/^htps?:\/\//i.test(urlString)) {
-        urlString = urlString.replace(/^htps?:\/\//i, "https://");
-      } else if (/^htpt?s?:\/\//i.test(urlString)) {
-        urlString = "http://" + urlString.replace(/^htpt?s?:\/\//i, "");
-      } else {
-        urlString = "http://" + urlString;
-      }
-    }
-
-    let parsedUrl;
     try {
-      parsedUrl = new URL(urlString);
-    } catch (e) {
-      // Create a fallback parser for basic domains without protocol
+      // 1. Sanitize & Normalize URL
+      let urlString = rawUrl.trim();
+      let hasProtocolError = false;
+
+      if (!urlString) {
+        console.warn('[PhishShield] Empty URL input');
+        onPhase("Scan failed: Empty URL input", 0);
+        onComplete(this._errorResult(rawUrl, "Empty URL input provided"));
+        return;
+      }
+
+      // Detect protocol spelling typos
+      if (/^(htpt|htps|http|https|ttp|tps|tp)\b/i.test(urlString)) {
+        if (!/^(https?:\/\/)/i.test(urlString)) {
+          hasProtocolError = true;
+          console.warn('[PhishShield] Protocol spelling error detected in:', urlString);
+        }
+      }
+
+      // Standardize URL
+      if (!/^https?:\/\//i.test(urlString)) {
+        if (/^https?\/\//i.test(urlString)) {
+          urlString = urlString.replace(/^https?\/\//i, "https://");
+        } else if (/^htps?:\/\//i.test(urlString)) {
+          urlString = urlString.replace(/^htps?:\/\//i, "https://");
+        } else if (/^htpt?s?:\/\//i.test(urlString)) {
+          urlString = "https://" + urlString.replace(/^htpt?s?:\/\//i, "");
+        } else {
+          urlString = "https://" + urlString;
+        }
+      }
+
+      console.log('[PhishShield] Normalized URL:', urlString);
+
+      let parsedUrl;
       try {
-        parsedUrl = new URL("http://" + urlString);
-      } catch (err) {
-        onPhase("Scan failed: Invalid URL syntax", 0);
-        return null;
+        parsedUrl = new URL(urlString);
+      } catch (e) {
+        try {
+          parsedUrl = new URL("http://" + urlString);
+        } catch (err) {
+          console.error('[PhishShield] URL parsing failed:', err.message);
+          onPhase("Scan failed: Invalid URL syntax", 0);
+          onComplete(this._errorResult(rawUrl, "Invalid URL syntax — could not parse"));
+          return;
+        }
+      }
+
+      const host = parsedUrl.hostname.toLowerCase();
+      const isHttps = parsedUrl.protocol.toLowerCase() === "https:";
+      console.log('[PhishShield] Parsed host:', host, '| HTTPS:', isHttps);
+
+      // Progressive scanning phases
+      const phases = [
+        { text: "Establishing secure SSL connection & parsing handshakes...", delay: 100, pct: 15 },
+        { text: `Resolving DNS mapping for host [${host}]...`, delay: 120, pct: 35 },
+        { text: "Querying global threat intelligence & reputation tables...", delay: 100, pct: 55 },
+        { text: "Executing AI heuristical evaluation on domain structure...", delay: 150, pct: 75 },
+        { text: "Running deep-learning classification engine models...", delay: 100, pct: 90 },
+        { text: "Compiling telemetry vectors and threat profile...", delay: 80, pct: 100 }
+      ];
+
+      for (let i = 0; i < phases.length; i++) {
+        onPhase(phases[i].text, phases[i].pct);
+        await this.sleep(phases[i].delay);
+      }
+
+      // Evaluate risk and compose response
+      console.log('[PhishShield] Running evaluateRisk()...');
+      let scanResult;
+      try {
+        scanResult = this.evaluateRisk(urlString, host, isHttps, hasProtocolError);
+      } catch (evalErr) {
+        console.error('[PhishShield] evaluateRisk() threw error:', evalErr);
+        scanResult = this._errorResult(urlString, `Risk evaluation error: ${evalErr.message}`);
+      }
+
+      console.log('[PhishShield] Scan result:', JSON.stringify(scanResult, null, 2));
+
+      // Add to local history and trigger update
+      if (this.app) {
+        this.app.addToHistory(scanResult);
+      }
+
+      onComplete(scanResult);
+    } catch (fatalErr) {
+      console.error('[PhishShield] FATAL scan error:', fatalErr);
+      try {
+        onComplete(this._errorResult(rawUrl, `Unexpected scan error: ${fatalErr.message}`));
+      } catch (cbErr) {
+        console.error('[PhishShield] onComplete callback also failed:', cbErr);
       }
     }
+  }
 
-    const host = parsedUrl.hostname.toLowerCase();
-    const isHttps = parsedUrl.protocol.toLowerCase() === "https:";
-
-    // Progressive scanning phases mimicking true cybersecurity telemetry
-    const phases = [
-      { text: "Establishing secure SSL connection & parsing handshakes...", delay: 100, pct: 15 },
-      { text: `Resolving DNS mapping for host [${host}]...`, delay: 120, pct: 35 },
-      { text: "Querying global threat intelligence & reputation tables...", delay: 100, pct: 55 },
-      { text: "Executing AI heuristical evaluation on domain structure...", delay: 150, pct: 75 },
-      { text: "Running deep-learning classification engine models...", delay: 100, pct: 90 },
-      { text: "Compiling telemetry vectors and threat profile...", delay: 80, pct: 100 }
-    ];
-
-    for (let i = 0; i < phases.length; i++) {
-      onPhase(phases[i].text, phases[i].pct);
-      await this.sleep(phases[i].delay);
-    }
-
-    // Evaluate risk and compose response
-    const scanResult = this.evaluateRisk(urlString, host, isHttps, hasProtocolError);
-    
-    // Add to local history and trigger update
-    if (this.app) {
-      this.app.addToHistory(scanResult);
-    }
-
-    onComplete(scanResult);
+  /**
+   * Generates a safe error result object so the UI always receives something to render
+   */
+  _errorResult(rawUrl, errorMessage) {
+    return {
+      url: rawUrl || "unknown",
+      host: "error",
+      score: 0,
+      status: "Error",
+      ssl: "N/A",
+      age: "N/A",
+      registrar: "N/A",
+      ip: "0.0.0.0",
+      country: "Unknown",
+      countryCode: "??",
+      confidence: "0%",
+      category: "Scan Error",
+      flags: [`⚠ ${errorMessage}`]
+    };
   }
 
   /**
@@ -177,7 +230,7 @@ class PhishShieldScanner {
 
     // Levenshtein brand spelling typosquatting checker
     const hostParts = host.split(/[\.-]/);
-    const popularBrands = ["google", "paypal", "netflix", "chase", "microsoft", "amazon", "facebook", "apple", "github", "wikipedia"];
+    const popularBrands = ["google", "paypal", "netflix", "chase", "microsoft", "amazon", "facebook", "apple", "github", "wikipedia", "flipkart", "whatsapp", "pepperfry"];
     let typosquattingBrand = null;
     let typosquattingPart = null;
 
@@ -200,8 +253,7 @@ class PhishShieldScanner {
       flags.push(`Brand Spoof Typosquatting: Domain segment '${typosquattingPart}' looks like a deceptive spelling variation of the brand '${typosquattingBrand}'.`);
     }
 
-    // Length analysis
-    if (host.length > 25) {
+    if (host.length > 35) {
       score += 10;
       flags.push("Abnormally Long Domain Name Structure");
     }
@@ -263,10 +315,10 @@ class PhishShieldScanner {
     // Generate dynamic/consistent registrar, country, IP from hashing the host string
     const hostHash = this.hashString(host);
     const ip = `${100 + (hostHash % 120)}.${50 + (hostHash % 150)}.${10 + (hostHash % 200)}.${1 + (hostHash % 254)}`;
-    
+
     // Choose registrar
     const registrar = REGISTRARS[hostHash % REGISTRARS.length];
-    
+
     // Choose country
     const countryObj = COUNTRIES[hostHash % COUNTRIES.length];
     if (countryObj.risk === "High") {
@@ -279,9 +331,9 @@ class PhishShieldScanner {
 
     // Classify risk status
     let status = "Safe";
-    if (score >= 31 && score <= 59) {
+    if (score >= 60 && score <= 79) {
       status = "Suspicious";
-    } else if (score >= 60 && score <= 90) {
+    } else if (score >= 80 && score <= 90) {
       status = "Dangerous";
     } else if (score >= 91) {
       status = "Critical Threat";
@@ -347,6 +399,16 @@ class PhishShieldScanner {
   extractBaseDomain(host) {
     const parts = host.split(".");
     if (parts.length > 2) {
+      // Check if it's a double-part TLD (e.g., co.in, co.uk, ac.in, gov.in, edu.in)
+      const secondToLast = parts[parts.length - 2].toLowerCase();
+      const last = parts[parts.length - 1].toLowerCase();
+
+      const commonDoubleTldMiddles = ["co", "com", "ac", "gov", "org", "net", "edu", "res", "mil"];
+      if (commonDoubleTldMiddles.includes(secondToLast) && last.length === 2) {
+        if (parts.length > 3) {
+          return parts.slice(-3).join(".");
+        }
+      }
       return parts.slice(-2).join(".");
     }
     return host;
