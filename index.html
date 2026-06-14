@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PhishShield AI // Enterprise Cybersecurity URL Threat Detection SaaS</title>
+  
+  <!-- Core Custom Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+  
+  <!-- FontAwesome CDN for Premium Security Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Cyber Grid Background Visual Assets -->
+  <div class="grid-bg-overlay"></div>
+  <div class="radial-glow-overlay"></div>
+
+  <!-- Main Application Wrapper -->
+  <div class="app-container">
+
+    <!-- ==========================================
+         GLASS NAV SIDEBAR COMPONENT
+         ========================================== -->
+    <aside class="sidebar">
+      <div class="logo-section">
+        <i class="fa-solid fa-shield-halved"></i>
+        <div class="brand-name">PHISH<span>SHIELD</span></div>
+      </div>
+
+      <ul class="nav-menu">
+        <li class="nav-item active" data-view="home">
+          <i class="fa-solid fa-house-chimney"></i>
+          <span>Home Portal</span>
+        </li>
+        <li class="nav-item" data-view="scanner">
+          <i class="fa-solid fa-tower-radar"></i>
+          <span>URL Scanner</span>
+        </li>
+        <li class="nav-item" data-view="sandbox">
+          <i class="fa-solid fa-box-open"></i>
+          <span>Virtual Sandbox</span>
+        </li>
+        <li class="nav-item" data-view="dashboard">
+          <i class="fa-solid fa-chart-line"></i>
+          <span>Security Dashboard</span>
+        </li>
+        <li class="nav-item" data-view="intel">
+          <i class="fa-solid fa-globe"></i>
+          <span>Threat Intel Map</span>
+        </li>
+        <li class="nav-item" data-view="settings">
+          <i class="fa-solid fa-sliders"></i>
+          <span>Admin Console</span>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="system-status">
+          <span class="status-dot"></span>
+          <span>SYSTEM: NOMINAL</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ==========================================
+         MAIN WRAPPER & SUB-VIEWS COMPONENT
+         ========================================== -->
+    <div class="main-wrapper">
+      
+      <!-- Sticky Header Bar -->
+      <header class="app-header">
+        <div class="flex-align">
+          <span class="txt-muted text-xs font-mono">ENDPOINT API:</span>
+          <span class="badge badge-success text-cyan font-mono" id="header-api-key-indicator" style="background: rgba(0,229,255,0.05); border: 1px solid rgba(0,229,255,0.2);">ps_live_a8f9...</span>
+        </div>
+
+        <div class="header-controls">
+          <div class="flex-align" style="gap: 0.5rem; margin-right: 1rem;">
+            <i class="fa-solid fa-wave-square glow-emerald"></i>
+            <span class="text-xs txt-muted font-mono" style="letter-spacing: 0.5px;">SECURE NODE PING: <span class="glow-emerald">12ms</span></span>
+          </div>
+
+          <div class="notification-bell">
+            <i class="fa-regular fa-bell"></i>
+            <span class="bell-badge"></span>
+          </div>
+
+          <div class="user-profile-badge">
+            <div class="user-avatar">SR</div>
+            <span class="user-name">SecOps Admin</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- ==========================================
+           TAB 1: HOMEPAGE (LANDING PORTAL)
+           ========================================== -->
+      <main id="view-home" class="view-section active-view">
+        <section class="hero-container">
+          <div class="hero-text">
+            <h1>Next-Gen AI <span>URL Threat Intelligence</span></h1>
+            <p>PhishShield isolates, dissects, and neutralizes credential hijacking, phishing redirects, and drive-by malware attacks instantly. Empower your SOC with advanced heuristic classification.</p>
+            <div class="hero-ctas">
+              <button class="btn btn-primary" id="landing-launch-scanner-cta">
+                <i class="fa-solid fa-bolt"></i> Launch Live Scanner
+              </button>
+              <button class="btn btn-secondary" onclick="app.switchView('dashboard')">
+                <i class="fa-solid fa-chart-simple"></i> View Cyber Dashboard
+              </button>
+            </div>
+          </div>
+          
+          <div class="hero-visual">
+            <div class="radar-siren">
+              <div class="radar-beam"></div>
+              <div class="central-shield-node">
+                <i class="fa-solid fa-shield-halved"></i>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Feature Grid Cards -->
+        <section class="landing-grid-features">
+          <div class="glass-panel feature-card">
+            <div class="feature-icon-wrapper">
+              <i class="fa-solid fa-brain"></i>
+            </div>
+            <h3>Deep Heuristic AI Engine</h3>
+            <p>Parses hostname metadata, structural subdomains, and lexical brand hijacking tags using local models under 30ms.</p>
+          </div>
+
+          <div class="glass-panel feature-card">
+            <div class="feature-icon-wrapper">
+              <i class="fa-solid fa-box-open"></i>
+            </div>
+            <h3>Virtual Isolation Sandbox</h3>
+            <p>Execute suspicious sites in a secure remote node workspace. Prevent client-side cookie theft and fingerprint scrapes.</p>
+          </div>
+
+          <div class="glass-panel feature-card">
+            <div class="feature-icon-wrapper">
+              <i class="fa-solid fa-firewall"></i>
+            </div>
+            <h3>Active Cyber Firewall</h3>
+            <p>URLs scoring higher than threshold limits are firewalled. Malicious scripts, downloads, and domains are quarantined instantly.</p>
+          </div>
+        </section>
+
+        <!-- Statistics & Trust Indicators -->
+        <section class="trust-indicators">
+          <p class="txt-muted text-xs font-mono" style="text-transform: uppercase; letter-spacing: 2px;">TRUSTED BY LEADING GLOBAL CYBER TEAMS</p>
+          <div class="trust-brands">
+            <span class="trust-brand">DEFENSE_NET</span>
+            <span class="trust-brand">ORBITAL_TECH</span>
+            <span class="trust-brand">APEX_SEC</span>
+            <span class="trust-brand">NEON_LABS</span>
+          </div>
+        </section>
+
+
+
+      </main>
+
+      <!-- ==========================================
+           TAB 2: URL THREAT SCANNER PORTAL
+           ========================================== -->
+      <main id="view-scanner" class="view-section">
+        <div style="margin-bottom: 2rem;">
+          <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem;">AI URL Threat Analyzer</h2>
+          <p class="txt-muted">Feed any URL coordinate into our neural threat heuristics machine to evaluate safety markers.</p>
+        </div>
+
+        <div class="scanner-grid">
+          
+          <!-- Scanner Left Panel -->
+          <div>
+            <div class="glass-panel scan-console-wrapper">
+              <div class="scanner-input-container">
+                <i class="fa-solid fa-globe"></i>
+                <input type="text" id="scanner-url-input" placeholder="Paste URL coordinate to parse... (e.g. netflix-billing-renew.net)">
+                <button class="btn btn-primary" id="start-scan-btn">
+  <i class="fa-solid fa-shield-halved"></i> Analyze URL
+</button>
+<button class="btn btn-secondary" id="preview-url-btn" title="Open safe sandbox preview for entered URL">
+  <i class="fa-solid fa-box-open"></i> Preview Sandbox
+</button>
+              </div>
+            </div>
+
+            <!-- Progress Output Console Log -->
+            <div class="terminal-header-bar">
+              <span><i class="fa-solid fa-terminal"></i> HEURISTICS ENGINE TELEMETRY</span>
+              <div class="terminal-dots">
+                <span class="terminal-dot terminal-dot-red"></span>
+                <span class="terminal-dot terminal-dot-yellow"></span>
+                <span class="terminal-dot terminal-dot-green"></span>
+              </div>
+            </div>
+            <div class="terminal-console" id="terminal-logs">
+              <span class="terminal-row">> System online. Awaiting URL input payload...</span>
+              <span class="terminal-row">> Ready to process scans under active sensitivity policies.</span>
+              <div class="terminal-cursor"></div>
+            </div>
+          </div>
+
+          <!-- Scanner Right Panel (Progress Score Indicator) -->
+          <div class="glass-panel" style="padding: 1.25rem;">
+            <h3 style="font-size: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem; margin-bottom: 1rem; text-align: center;">THREAT LEVEL DIAL</h3>
+            
+            <div class="score-badge-matrix">
+              <div class="circular-score-wrapper">
+                <svg class="circular-progress-svg" width="160" height="160">
+                  <circle class="circular-progress-bg" cx="80" cy="80" r="70" fill="none" stroke-width="12" />
+                  <circle class="circular-progress-bar" id="circle-progress-ring" cx="80" cy="80" r="70" fill="none" stroke-width="12" />
+                </svg>
+                <div class="score-text-inner">
+                  <span class="score-number-main" id="circle-progress-value">--</span>
+                  <span class="score-subtitle">Risk Index</span>
+                </div>
+              </div>
+              <div class="risk-level-badge" id="res-risk-badge" style="display: inline-block;">Awaiting Target</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Dynamic Results Breakdown Section -->
+        <div id="scan-result-reveal" style="display: none; margin-top: 2rem; animation: fadeIn 0.4s ease-out;">
+          <div class="glass-panel">
+            <h3 style="font-size: 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.75rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+              <i class="fa-solid fa-server text-cyan"></i> Structural Telemetry Analysis: <span id="res-target-domain" style="color: #fff; font-family: var(--font-mono); font-size: 1rem;">google.com</span>
+            </h3>
+
+            <!-- Grid details parameters -->
+            <div class="metadata-matrix">
+              <div class="metadata-card">
+                <div class="metadata-label">SSL Authentication</div>
+                <div class="metadata-value">
+                  <i id="res-ssl-icon" class="fa-solid fa-lock text-emerald"></i>
+                  <span id="res-ssl-indicator">Valid</span>
+                </div>
+              </div>
+              <div class="metadata-card">
+                <div class="metadata-label">Domain Registrant Age</div>
+                <div class="metadata-value">
+                  <i class="fa-regular fa-calendar-check text-cyan"></i>
+                  <span id="res-domain-age">24 Years</span>
+                </div>
+              </div>
+              <div class="metadata-card">
+                <div class="metadata-label">Registered Authority</div>
+                <div class="metadata-value">
+                  <i class="fa-solid fa-file-signature text-cyan"></i>
+                  <span id="res-registrar">MarkMonitor</span>
+                </div>
+              </div>
+              <div class="metadata-card">
+                <div class="metadata-label">Resolved IP Address</div>
+                <div class="metadata-value">
+                  <i class="fa-solid fa-network-wired text-cyan"></i>
+                  <span id="res-ip-addr" style="font-family: var(--font-mono); font-size: 0.85rem;">172.217.16.142</span>
+                </div>
+              </div>
+              <div class="metadata-card">
+                <div class="metadata-label">Hosting Geolocation</div>
+                <div class="metadata-value">
+                  <i class="fa-solid fa-location-dot text-cyan"></i>
+                  <span id="res-geolocation">United States (US)</span>
+                </div>
+              </div>
+              <div class="metadata-card">
+                <div class="metadata-label">AI Inference Confidence</div>
+                <div class="metadata-value">
+                  <i class="fa-solid fa-compass-drafting text-cyan"></i>
+                  <span id="res-ai-confidence">99.8%</span>
+                </div>
+              </div>
+              <div class="metadata-card">
+                <div class="metadata-label">Threat Classification</div>
+                <div class="metadata-value">
+                  <i class="fa-solid fa-tags text-cyan"></i>
+                  <span id="res-category">Search Engine</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Trigger warning list banner -->
+            <div class="flag-list-wrapper">
+              <h3>Heuristic Threat Flags Raised</h3>
+              <div id="heuristic-flags-rows">
+                <!-- Javascript will inject list cards here -->
+              </div>
+            </div>
+
+            <!-- Smart block and sandbox action panel -->
+            <div class="glass-panel" style="margin-top: 2rem; background: rgba(0,229,255,0.02); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;">
+              <div>
+                <p id="sandbox-trigger-banner-desc" style="font-weight: 500; font-size: 0.95rem;"></p>
+                <p class="txt-muted text-xs mt-1" style="max-width: 580px;">The quarantine sandbox executes dangerous JavaScript sequences and cookie harvesting loops within an isolated environment, protecting your client terminal.</p>
+              </div>
+              <div style="width: 280px;">
+                <button class="btn btn-primary w-full" id="launch-sandbox-preview-btn">
+                  <i class="fa-solid fa-box-open"></i> Execute Safe Sandbox Preview
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </main>
+
+      <!-- ==========================================
+           TAB 3: SECURE BROWSER SANDBOX
+           ========================================== -->
+      <main id="view-sandbox" class="view-section">
+        <div class="sandbox-view-wrapper">
+          <div>
+            <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Isolated Browser Sandbox</h2>
+            <p class="txt-muted">Analyze suspect pages inside an airgapped virtual browser interface. Smart Shield auto-blocks hazardous scripts dynamically.</p>
+          </div>
+
+          <div class="browser-shell">
+            
+            <!-- Browser Header controls panel -->
+            <div class="browser-top-controls">
+              <div class="browser-nav-buttons">
+                <span class="browser-nav-btn"><i class="fa-solid fa-arrow-left"></i></span>
+                <span class="browser-nav-btn"><i class="fa-solid fa-arrow-right"></i></span>
+                <span class="browser-nav-btn" onclick="app.runSandboxPreview(document.getElementById('sandbox-address-input-bar').value)"><i class="fa-solid fa-rotate-right"></i></span>
+              </div>
+
+              <!-- Simulated security icons inside search bar -->
+              <div class="browser-search-address">
+                <i class="fa-solid fa-lock" id="sandbox-secure-lock-icon"></i>
+                <input type="text" id="sandbox-address-input-bar" value="https://google.com" style="background: transparent; border: none; color: #e2e8f0; width: 100%; outline: none;" placeholder="Input target domain to route through sandbox...">
+                <button class="btn btn-primary" id="sandbox-go-search-btn" style="padding: 0.2rem 0.85rem; font-size: 0.75rem; border-radius: 12px; font-family: var(--font-sans);">Go</button>
+              </div>
+
+              <div class="browser-tab-label">
+                <i class="fa-solid fa-shield-halved text-cyan"></i>
+                <span id="sandbox-title-tab-label" style="max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">google.com</span>
+              </div>
+            </div>
+
+            <!-- Main Render Area -->
+            <div class="sandbox-viewport" id="sandbox-render-viewport">
+              <div class="sandbox-rendered-body" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; color: #555;">
+                <i class="fa-solid fa-box-open" style="font-size: 4rem; color: #ccc; margin-bottom: 1.5rem;"></i>
+                <h3 style="color: #333; margin-bottom: 0.5rem; font-family: var(--font-sans);">No Quarantined URL Loaded</h3>
+                <p style="max-width: 420px; font-size: 0.9rem;">Input a URL coordinate in the address bar above, or perform a scan in the threat center, and click 'Execute Sandbox Preview'.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </main>
+
+      <!-- ==========================================
+           TAB 4: SECURITY & ANALYTICS DASHBOARD
+           ========================================== -->
+      <main id="view-dashboard" class="view-section">
+        <div class="flex-space" style="margin-bottom: 2rem;">
+          <div>
+            <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem;">SOC Operational Analytics</h2>
+            <p class="txt-muted">Real-time threat feeds, scanning statistics, and attack vector graphs.</p>
+          </div>
+          <div class="badge badge-success" id="shield-status-indicator" style="padding: 0.5rem 1rem; border-radius: 4px; font-family: var(--font-cyber); font-size: 0.8rem; border: 1px solid rgba(0,230,118,0.25);">
+            <!-- Status injected by Javascript -->
+          </div>
+        </div>
+
+        <!-- Telemetry Counters Matrix -->
+        <section class="telemetry-matrix">
+          <div class="glass-panel stat-glow-card card-neutral">
+            <span class="stat-title">Global Scan Cycles</span>
+            <div class="stat-metric" id="dash-stat-total">14,209</div>
+          </div>
+          <div class="glass-panel stat-glow-card card-blocked">
+            <span class="stat-title">Threat Nodes Blocked</span>
+            <div class="stat-metric" id="dash-stat-blocked">3,844</div>
+          </div>
+          <div class="glass-panel stat-glow-card card-safe">
+            <span class="stat-title">Safe Domains verified</span>
+            <div class="stat-metric" id="dash-stat-safe">8,932</div>
+          </div>
+          <div class="glass-panel stat-glow-card card-susp">
+            <span class="stat-title">Suspicious Endpoints</span>
+            <div class="stat-metric" id="dash-stat-suspicious">1,433</div>
+          </div>
+        </section>
+
+        <!-- Charts Layout -->
+        <div class="dashboard-grid-charts">
+          <div class="glass-panel" style="display: flex; flex-direction: column;">
+            <h3 style="font-size: 1rem; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem;">PHISHSHIELD THREAT INDEX TIMELINE (24h)</h3>
+            <div id="timeline-chart-container" style="flex-grow: 1; display: flex; align-items: center; justify-content: center; min-height: 180px;">
+              <!-- Javascript draws SVG charts here -->
+            </div>
+          </div>
+
+          <div class="glass-panel" style="display: flex; flex-direction: column; align-items: center;">
+            <h3 style="font-size: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem; width: 100%;">ATTACK VECTOR SPECTRUM</h3>
+            <div id="vectors-chart-container" style="flex-grow: 1; display: flex; align-items: center; justify-content: center;">
+              <!-- Javascript draws concentric ring donut charts here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Real-Time Activity Feed Logs -->
+        <div class="glass-panel" style="margin-bottom: 2rem;">
+          <h3 style="font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.75rem; margin-bottom: 1rem;"><i class="fa-solid fa-heartbeat text-cyan"></i> LIVE SECURE SYSTEM FIREWALL SIGNAL TICKER</h3>
+          <div style="overflow-x: auto; max-height: 320px;">
+            <table class="recent-feed-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Source IP</th>
+                  <th>Target Host Domain</th>
+                  <th>Threat Core</th>
+                  <th>Firewall Status</th>
+                  <th class="text-end">SecOps Message</th>
+                </tr>
+              </thead>
+              <tbody id="live-activity-feed-body">
+                <!-- Dynamic logs rows injected here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Scans history log list -->
+        <div class="glass-panel">
+          <div class="flex-space" style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.75rem; margin-bottom: 1rem;">
+            <h3><i class="fa-solid fa-clock-rotate-left text-cyan"></i> RECENT SCAN OPERATIONS JOURNAL</h3>
+            <button class="btn btn-secondary" id="clear-history-btn" style="padding: 0.35rem 1rem; font-size: 0.75rem;"><i class="fa-solid fa-trash-arrow-up"></i> Clear History</button>
+          </div>
+          
+          <div style="overflow-x: auto;">
+            <table class="dashboard-history-table">
+              <thead>
+                <tr>
+                  <th>Analyzed URL Coordinate</th>
+                  <th class="text-center">Score Index</th>
+                  <th>Heuristic Classification</th>
+                  <th class="text-end">Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id="recent-scans-table-body">
+                <!-- Javascript populates database array history lists here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+
+      <!-- ==========================================
+           TAB 5: THREAT INTEL MAP & CHROME EXT
+           ========================================== -->
+      <main id="view-intel" class="view-section">
+        <div style="margin-bottom: 2rem;">
+          <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Global Threat Intelligence Hub</h2>
+          <p class="txt-muted">Track active cybersecurity signals, server coordinate vectors, and install defensive endpoints.</p>
+        </div>
+
+        <div class="threat-intel-grid">
+          
+          <!-- Heatmap visualization box -->
+          <div class="glass-panel threat-heatmap-card">
+            <h3><i class="fa-solid fa-map-location-dot text-cyan"></i> LIVE ATTACK COORDINATE VECTOR TICKER</h3>
+            <div class="map-visual-placeholder">
+              <div class="world-map-grid-dots"></div>
+              
+              <!-- Red/Amber Pulsating coordinates indicators -->
+              <div class="heatmap-pulse-node" style="top: 25%; left: 20%; animation-delay: 0.2s;"><title>US (Phishing Node)</title></div>
+              <div class="heatmap-pulse-node" style="top: 40%; left: 78%; animation-delay: 0.8s;"><title>CN (Malware Node)</title></div>
+              <div class="heatmap-pulse-node" style="top: 60%; left: 32%; animation-delay: 0.5s;"><title>BR (Adware Node)</title></div>
+              <div class="heatmap-pulse-node" style="top: 30%; left: 55%; animation-delay: 1.2s;"><title>RU (Ransomware Node)</title></div>
+              <div class="heatmap-pulse-node pulse-node-cyan" style="top: 50%; left: 82%; animation-delay: 1.4s;"><title>SG (Clean Safe Hub)</title></div>
+              <div class="heatmap-pulse-node pulse-node-cyan" style="top: 35%; left: 45%; animation-delay: 0.1s;"><title>DE (Clean Safe Hub)</title></div>
+            </div>
+            
+            <p class="txt-muted text-xs mt-3">Coordinates mapped map active phishing server deployments in real-time. Pulsating rings denote live heuristic classifications.</p>
+          </div>
+
+          <!-- Chrome extension popup simulator mockup -->
+          <div class="glass-panel">
+            <h3><i class="fa-brands fa-chrome text-cyan"></i> Chrome Browser Defensive Extension</h3>
+            <p class="txt-muted text-sm mb-4">Install our lightweight defensive endpoint to capture, analyze, and quarantine redirect traps automatically in your browser.</p>
+
+            <div class="chrome-extension-wrapper">
+              <div>
+                <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.85rem; color: var(--text-muted);">
+                  <li><i class="fa-solid fa-circle-check text-emerald"></i> Active Redirect Intercept Layer</li>
+                  <li><i class="fa-solid fa-circle-check text-emerald"></i> DNS-hijack local mitigation</li>
+                  <li><i class="fa-solid fa-circle-check text-emerald"></i> Form Credential protection alert</li>
+                  <li><i class="fa-solid fa-circle-check text-emerald"></i> Zero-latency heuristic matching</li>
+                </ul>
+                <div style="margin-top: 1.5rem;">
+                  <button class="btn btn-primary" onclick="alert('Demo setup: Chrome Extension mockup. Core service active.')">
+                    <i class="fa-brands fa-chrome"></i> Install Endpoint
+                  </button>
+                </div>
+              </div>
+
+              <!-- Visual popup mock card -->
+              <div class="mockup-extension-popup">
+                <div class="extension-top-bar">
+                  <div class="extension-logo">
+                    <i class="fa-solid fa-shield-halved text-cyan"></i>
+                    <span>PHISH<span>SHIELD</span></span>
+                  </div>
+                  <div class="extension-power-btn">
+                    <i class="fa-solid fa-power-off"></i>
+                  </div>
+                </div>
+
+                <div class="extension-body">
+                  <div class="extension-shield-circle">
+                    <i class="fa-solid fa-shield-halved"></i>
+                  </div>
+                  <div class="extension-status-header">SHIELD INTERCEPT ON</div>
+                  <div class="extension-status-desc">Protecting your current web session</div>
+                  
+                  <div class="extension-stat-split">
+                    <div class="extension-stat-box">
+                      <div class="extension-stat-num">410</div>
+                      <div class="extension-stat-label">Scans today</div>
+                    </div>
+                    <div class="extension-stat-box">
+                      <div class="extension-stat-num" style="color: var(--color-dangerous);">14</div>
+                      <div class="extension-stat-label">Threats Blocked</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="extension-footer">
+                  Endpoint Client Version: 2.1.9-stable
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </main>
+
+      <!-- ==========================================
+           TAB 6: SETTINGS & SECURITY TOOLS
+           ========================================== -->
+      <main id="view-settings" class="view-section">
+        <div style="margin-bottom: 2rem;">
+          <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem;">SOC Policy Manager Console</h2>
+          <p class="txt-muted">Configure threat triggers, manage access keys, and customize security whitelists/blacklists.</p>
+        </div>
+
+        <div class="settings-grid">
+          
+          <!-- Whitelist / Blacklist Manager Panels -->
+          <div class="glass-panel">
+            <h3 style="font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem; margin-bottom: 1.5rem;"><i class="fa-solid fa-user-shield text-cyan"></i> Enterprise Access Lists</h3>
+
+            <!-- Whitelist crud panel -->
+            <div class="list-manager-box mb-4" style="margin-bottom: 1.5rem;">
+              <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+                <span>Global Safe Whitelist</span>
+                <span class="txt-muted text-xs">Bypasses scanning rules</span>
+              </h4>
+              <div class="list-input-row">
+                <input type="text" id="whitelist-input-field" placeholder="Enter safe domain (e.g. apple.com)">
+                <button class="btn btn-secondary" id="add-whitelist-btn" style="padding: 0.45rem 1rem;">Add</button>
+              </div>
+              <div class="list-scroll-pane" id="whitelist-scroll-list">
+                <!-- Javascript populates Whitelisted domains row list -->
+              </div>
+            </div>
+
+            <!-- Blacklist crud panel -->
+            <div class="list-manager-box">
+              <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between;">
+                <span>System Block Blacklist</span>
+                <span class="txt-muted text-xs">Auto-blocked instantly</span>
+              </h4>
+              <div class="list-input-row">
+                <input type="text" id="blacklist-input-field" placeholder="Enter hazard domain (e.g. ransomware.net)">
+                <button class="btn btn-secondary" id="add-blacklist-btn" style="padding: 0.45rem 1rem;">Block</button>
+              </div>
+              <div class="list-scroll-pane" id="blacklist-scroll-list">
+                <!-- Javascript populates Blacklisted domains row list -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Configuration Controls & API Manager -->
+          <div class="glass-panel" style="display: flex; flex-direction: column; gap: 2rem;">
+            
+            <!-- Sensitivity parameters slider -->
+            <div>
+              <h3 style="font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem; margin-bottom: 1rem;"><i class="fa-solid fa-sliders text-cyan"></i> Threat Sensitivity Multiplier</h3>
+              <p class="txt-muted text-xs">Adjusting scanner thresholds alters AI weights, causing the engine to flag minor structural anomalies more proactively.</p>
+              
+              <div class="slider-container">
+                <input type="range" id="sensitivity-range-slider" min="0.5" max="2.0" step="0.1" value="1.0">
+                <span class="slider-value-display" id="sensitivity-slider-value">1.0x</span>
+              </div>
+            </div>
+
+            <!-- Auto-Block and notifications toggles -->
+            <div>
+              <h3 style="font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem; margin-bottom: 1rem;"><i class="fa-solid fa-gears text-cyan"></i> Active Mitigation Policies</h3>
+              
+              <div class="form-group-toggle">
+                <div>
+                  <div style="font-weight: 500; font-size: 0.9rem;">Automatic Threat Quarantine</div>
+                  <div class="switch-label-desc">Domains scoring >= 60 are barred from client preview.</div>
+                </div>
+                <label class="cyber-switch">
+                  <input type="checkbox" id="auto-block-toggle-switch" checked>
+                  <span class="switch-slider"></span>
+                </label>
+              </div>
+
+              <div class="form-group-toggle">
+                <div>
+                  <div style="font-weight: 500; font-size: 0.9rem;">Email Alerts & Webhooks</div>
+                  <div class="switch-label-desc">Dispatches floating warning telemetry logs on critical attacks.</div>
+                </div>
+                <label class="cyber-switch">
+                  <input type="checkbox" id="email-alerts-toggle-switch" checked>
+                  <span class="switch-slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <!-- API Endpoint Token generator -->
+            <div>
+              <h3 style="font-size: 1.1rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem; margin-bottom: 1rem;"><i class="fa-solid fa-key text-cyan"></i> Live Telemetry Access Key</h3>
+              <p class="txt-muted text-xs">Access the real-time AI scanning model programmatically through our HTTPS POST routes.</p>
+              
+              <div class="api-key-input-row">
+                <input type="text" id="api-key-input-field" readonly value="••••••••••••••••••••••••••••••••">
+                <i class="fa-solid fa-eye api-key-eye-btn" id="toggle-api-key-eye"></i>
+              </div>
+              <div style="margin-top: 1rem; display: flex; justify-content: flex-end;">
+                <button class="btn btn-secondary" id="regen-api-key-btn" style="padding: 0.45rem 1.2rem; font-size: 0.8rem;"><i class="fa-solid fa-arrows-rotate"></i> Regenerate API Key</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </main>
+
+    </div>
+  </div>
+
+  <!-- ==========================================
+       SIMULATED FLOATING EMAIL ALARM POPUP
+       ========================================== -->
+  <div class="floating-email-alert" id="floating-email-alert-container">
+    <div class="email-alert-header">
+      <h4><i class="fa-solid fa-radiation fa-spin" style="--fa-animation-duration: 4s;"></i> SECOP CRITICAL ALERT</h4>
+      <i class="fa-solid fa-xmark email-alert-close" id="close-email-alert-banner"></i>
+    </div>
+    <div class="email-alert-body">
+      <div class="email-alert-subject">PhishShield Firewalled a Critical Threat</div>
+      <div class="email-alert-details">
+        <div><strong>TARGET NODE:</strong> <span id="email-alert-target-domain" class="font-mono text-cyan">chase-online.com</span></div>
+        <div><strong>RISK INDEX:</strong> <span id="email-alert-score-num" class="glow-red font-mono font-semibold">95</span>/100</div>
+        <div><strong>HOST IP:</strong> <span id="email-alert-ip" class="font-mono text-cyan">185.120.14.99</span></div>
+        <div><strong>LOCATION:</strong> <span id="email-alert-country" class="font-mono">Iceland</span></div>
+      </div>
+      <p class="txt-muted text-xs mb-3">Threat signals resolved active credentials leak structures. Client access blocked and quarantined in airgapped terminal node.</p>
+      <div class="email-alert-action-row">
+        <button class="btn btn-primary" style="padding: 0.35rem 1rem; font-size: 0.75rem;" onclick="app.switchView('sandbox'); app.runSandboxPreview(app.latestScanResult ? app.latestScanResult.url : 'http://paypal-security-update.com'); document.getElementById('floating-email-alert-container').style.display='none';">
+          <i class="fa-solid fa-shield-virus"></i> View Quarantined Logs
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load Subsystem modules order priority -->
+  <script src="js/mockData.js"></script>
+  <script src="js/scanner.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

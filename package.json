@@ -1,0 +1,17 @@
+{
+  "name": "phishshield-ai-saas",
+  "version": "1.0.0",
+  "description": "PhishShield Enterprise AI URL Threat Detection Platform",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx -y serve . -l 3000"
+  },
+  "keywords": [
+    "cybersecurity",
+    "phishing-detector",
+    "saas-mockup",
+    "threat-intelligence"
+  ],
+  "author": "PhishShield Security Labs",
+  "license": "MIT"
+}
